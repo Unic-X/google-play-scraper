@@ -3,7 +3,7 @@ package collection
 import (
 	"testing"
 
-	"github.com/n0madic/google-play-scraper/pkg/store"
+	"github.com/Unic-X/google-play-scraper/pkg/store"
 )
 
 var resultsCount = 70

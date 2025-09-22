@@ -4,15 +4,25 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/k3a/html2text"
 	"github.com/tidwall/gjson"
 )
+
+var userAgents = []string{
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
+	"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.137 Safari/537.36",
+	"Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1",
+	"Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36",
+}
 
 var (
 	scriptRegex = regexp.MustCompile(`>AF_initDataCallback[\s\S]*?<\/script`)
@@ -110,8 +120,13 @@ func GetJSONValue(data string, paths ...string) string {
 	return ""
 }
 
-// DoRequest by HTTP and read all
 func DoRequest(req *http.Request) ([]byte, error) {
+	if req.Header.Get("User-Agent") == "" {
+		req.Header.Set("User-Agent", userAgents[rand.Intn(len(userAgents))])
+	}
+
+	time.Sleep(time.Duration(500+rand.Intn(1000)) * time.Millisecond)
+
 	client := http.DefaultClient
 	resp, err := client.Do(req)
 	if err != nil {
@@ -124,7 +139,7 @@ func DoRequest(req *http.Request) ([]byte, error) {
 		return nil, fmt.Errorf("request error: %s", resp.Status)
 	}
 
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }
 
 // GetInitData from Google HTML

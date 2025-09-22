@@ -3,9 +3,9 @@ package category
 import (
 	"net/http"
 
-	"github.com/n0madic/google-play-scraper/internal/util"
-	"github.com/n0madic/google-play-scraper/pkg/scraper"
-	"github.com/n0madic/google-play-scraper/pkg/store"
+	"github.com/Unic-X/google-play-scraper/internal/util"
+	"github.com/Unic-X/google-play-scraper/pkg/scraper"
+	"github.com/Unic-X/google-play-scraper/pkg/store"
 )
 
 // Options type alias
